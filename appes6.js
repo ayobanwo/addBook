@@ -44,7 +44,7 @@ class UI {
 		if(target.className == 'delete'){
 			//Selecting the td by going 2 levels up from the 'a' tag then delete 'td'
 			target.parentElement.parentElement.remove()
-			
+
 			const ui = new UI()
 			ui.showAlert('Book Deleted', 'success');
 		}
@@ -88,8 +88,15 @@ class Store{
 
 		localStorage.setItem('books', JSON.stringify(books));
 	}
-	static deleteBook(){
+	static deleteBook(isbn){
+		const books = Store.getBooks();
 
+		books.forEach(function(book, index){
+			if(book.isbn === isbn){
+				books.splice(index, 1);
+			}
+		});
+		localStorage.setItem('books', JSON.stringify(books));
 	}
 }
 // DOM Load Event
@@ -136,7 +143,7 @@ document.querySelector('#book-list').addEventListener('click',
 		//Delete Book
 		ui.deleteBook(e.target);
 
-		//Success alert
-		// ui.showAlert('Book Deleted', 'success')
+		//Delete from Ls
+		Store.deleteBook(e.target.parentElement.previousElementSibling.textContent)
 	}
 )
