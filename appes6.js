@@ -44,7 +44,11 @@ class UI {
 		if(target.className == 'delete'){
 			//Selecting the td by going 2 levels up from the 'a' tag then delete 'td'
 			target.parentElement.parentElement.remove()
+			
+			const ui = new UI()
+			ui.showAlert('Book Deleted', 'success');
 		}
+
 	}
 
 	clearFields(){
@@ -54,6 +58,42 @@ class UI {
 	}
 }
 
+//Local Storage class
+class Store{
+	static getBooks(){
+		let books;
+		if(localStorage.getItem('books') === null ){
+			books = [];
+		}
+		else{
+			books = JSON.parse(localStorage.getItem('books'));
+		}
+
+		return books;
+	}
+	static displayBooks(){
+		const books = Store.getBooks();
+
+		books.forEach(function(book){
+			const ui = new UI
+
+			//Add book to UI
+			ui.addBookToList(book);
+		})
+	}
+	static addBook(book){
+		const books = Store.getBooks();
+ 
+		books.push(book);
+
+		localStorage.setItem('books', JSON.stringify(books));
+	}
+	static deleteBook(){
+
+	}
+}
+// DOM Load Event
+document.addEventListener('DOMContentLoaded', Store.displayBooks);
 //Event Listeners
 document.getElementById('book-form').addEventListener('submit', 
 	function(e){
@@ -75,6 +115,9 @@ document.getElementById('book-form').addEventListener('submit',
 			//Add book to list
 			ui.addBookToList(book);
 
+			// Add book to local storage
+			Store.addBook(book)
+
 			//Success alert
 			ui.showAlert('Book Added', 'success')
 			//Clear fields
@@ -82,8 +125,8 @@ document.getElementById('book-form').addEventListener('submit',
 		}
 
 		e.preventDefault();
-	})
-
+	}
+)
 //Event Listener to delete
 document.querySelector('#book-list').addEventListener('click', 
 	function(e){
@@ -94,6 +137,6 @@ document.querySelector('#book-list').addEventListener('click',
 		ui.deleteBook(e.target);
 
 		//Success alert
-		ui.showAlert('Book Deleted', 'success')
-
-})
+		// ui.showAlert('Book Deleted', 'success')
+	}
+)
